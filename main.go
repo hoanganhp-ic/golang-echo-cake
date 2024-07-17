@@ -2,6 +2,7 @@ package main
 
 import (
 	"fitness-api/cmd/handlers"
+	"fitness-api/cmd/route"
 	"fitness-api/cmd/storage"
 
 	"github.com/labstack/echo/v4"
@@ -10,7 +11,9 @@ import (
 
 func main() {
 	e := echo.New()
-	e.GET("/", handlers.Home)
+
+	// Test route
+	route.InitTest(e)
 
 	// connect to database
 	storage.InitDB()
@@ -28,9 +31,8 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))	  
 
-	// user routes
-	e.POST("/users", handlers.CreateUser)
-	e.POST("/measurements", handlers.CreateMeasurement)
+	// Init routes
+	route.InitRoutes(e)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

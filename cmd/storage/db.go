@@ -1,16 +1,18 @@
 package storage
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
+	
 )
 
-var db *sql.DB
+var db *gorm.DB
 
 func InitDB() {
 	err := godotenv.Load()
@@ -24,13 +26,10 @@ func InitDB() {
 	dbPass := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 
-	db, err = sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUser, dbPass, dbName, dbPort))
+	// db, err = sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUser, dbPass, dbName, dbPort))
+	sqlConnect := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUser, dbPass, dbName, dbPort)
+	db, err = gorm.Open(postgres.Open(sqlConnect), &gorm.Config{})
 
-	if err != nil {
-		panic(err.Error())
-	}
-
-	err = db.Ping()
 	if err != nil {
 		panic(err.Error())
 	}
@@ -38,6 +37,6 @@ func InitDB() {
 	fmt.Println("Successfully connected to database")
 }
 
-func GetDB() *sql.DB {
+func GetDB() *gorm.DB {
 	return db
 }
