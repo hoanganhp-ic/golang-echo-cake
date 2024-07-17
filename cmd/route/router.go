@@ -12,4 +12,6 @@ func InitTest(e *echo.Echo) {
 
 func InitRoutes(e *echo.Echo) {
 	e.POST("/cake", handlers.Create)
+	e.GET("/cake", handlers.Get)
+	e.GET("/cake/search", handlers.Search)
 }
