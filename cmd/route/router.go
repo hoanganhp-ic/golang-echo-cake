@@ -11,7 +11,20 @@ func InitTest(e *echo.Echo) {
 }
 
 func InitRoutes(e *echo.Echo) {
-	e.POST("/cake", handlers.Create)
-	e.GET("/cake", handlers.Get)
-	e.GET("/cake/search", handlers.Search)
+	// e.POST("/cakes", handlers.Create)
+	// e.GET("/cakes", handlers.Get)
+	// e.GET("/cakes/search", handlers.Search)
+
+	// create api group
+	apiGroup := e.Group("/api")
+
+	// create cake group
+	cake := apiGroup.Group("/cakes")
+
+	// cake routes
+	cake.POST("", handlers.Create)
+	cake.GET("", handlers.Get)
+	cake.GET("/search", handlers.Search)
+	cake.GET("/:id", handlers.GetByID)
+	cake.DELETE("/:id", handlers.DeleteByID)
 }

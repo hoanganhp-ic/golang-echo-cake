@@ -72,3 +72,29 @@ func Search(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, cakes)
 }
+
+func GetByID(c echo.Context) error {
+	id := c.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	cake, err := repositories.GetByID(idInt)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, cake)
+}
+
+func DeleteByID(c echo.Context) error {
+	id := c.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	err = repositories.DeleteByID(idInt)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, "Deleted")
+}
