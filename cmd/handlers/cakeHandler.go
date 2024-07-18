@@ -81,7 +81,7 @@ func GetByID(c echo.Context) error {
 	}
 	cake, err := repositories.GetByID(idInt)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, cake)
 }

@@ -48,7 +48,7 @@ func GetByID(id int) (models.Cake, error) {
 	var cake models.Cake
 	err := db.First(&cake, id).Error
 	if err != nil {
-		log.Errorf("cake not found %s",err)
+		log.Errorf("cake %s",err)
 		return cake, err
 	}
 	return cake, nil
