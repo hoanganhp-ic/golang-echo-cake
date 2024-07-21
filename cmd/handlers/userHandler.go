@@ -49,3 +49,23 @@ func (h *Handler) Login(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, response.NewUserResponse(u))
 
 }
+
+func (h *Handler) CurrentUser(cxt echo.Context) error {
+	id := userIdFromToken(cxt)
+	u, err := h.userRepositoryImpl.GetByID(id)
+	if err != nil {
+		return cxt.JSON(http.StatusInternalServerError, err.Error())
+	}
+	if u == nil {
+		return cxt.JSON(http.StatusNotFound, "User not found")
+	}
+	return cxt.JSON(http.StatusOK, u)
+}
+
+func userIdFromToken(ctx echo.Context) uint {
+	id, ok := ctx.Get("userId").(uint)
+	if !ok {
+		return 0
+	}
+	return id
+}

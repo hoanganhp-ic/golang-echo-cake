@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"fitness-api/cmd/jwt"
+	"fitness-api/cmd/utils"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -25,9 +28,14 @@ func InitRoutes(e *echo.Echo) {
 }
 
 func (h *Handler) Register(e *echo.Echo) {
+	jwtMiddleware := jwt.JWT(utils.JWTSecret)
 	// create api group
-	apiGroup := e.Group("/api")	
-	guestUsers := apiGroup.Group("/users")
-	guestUsers.POST("/register", h.SignUp)
-	guestUsers.POST("/login", h.Login)
+	apiGroup := e.Group("/api")
+	auth := apiGroup.Group("/auth")
+	auth.POST("/register", h.SignUp)
+	auth.POST("/login", h.Login)
+
+	// create user group
+	user := apiGroup.Group("/users", jwtMiddleware)
+	user.GET("/current", h.CurrentUser)
 }

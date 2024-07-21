@@ -2,14 +2,13 @@ package utils
 
 import (
 	"log"
-	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/joho/godotenv"
 )
 
-var JWTSecret string = os.Getenv("JWT_SECRET")
+var JWTSecret = []byte("secret")
 
 func GenerateJWT(id uint) string {
 

@@ -28,3 +28,11 @@ func (ur *UserRepositoryImpl) GetByEmail(email string) (*models.User, error) {
 	}
 	return &user, nil
 }
+
+func (ur *UserRepositoryImpl) GetByID(id uint) (*models.User, error) {
+	var user models.User
+	if err := ur.db.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
