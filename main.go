@@ -2,7 +2,7 @@ package main
 
 import (
 	"fitness-api/cmd/handlers"
-	"fitness-api/cmd/route"
+	repositoryimpl "fitness-api/cmd/repositories/repositoryImpl"
 	"fitness-api/cmd/storage"
 
 	"github.com/labstack/echo/v4"
@@ -13,10 +13,14 @@ func main() {
 	e := echo.New()
 
 	// Test route
-	route.InitTest(e)
+	handlers.InitTest(e)
 
 	// connect to database
 	storage.InitDB()
+	db := storage.GetDB()
+	us := repositoryimpl.NewUserRepositoryImpl(db)
+	h := handlers.NewHandler(us)
+	h.Register(e)
 
 	// middleware
 	e.Use(handlers.LogRequest)
@@ -29,10 +33,10 @@ func main() {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	}))	  
+	}))
 
 	// Init routes
-	route.InitRoutes(e)
+	handlers.InitRoutes(e)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

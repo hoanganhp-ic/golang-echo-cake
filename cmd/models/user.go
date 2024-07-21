@@ -1,21 +1,28 @@
 package models
 
-import "time"
+import (
+	"errors"
+
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+)
 
 type User struct {
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	CreatedAt string `json:"created_at"`
-	UpdateAt  string `json:"updated_at"`
+	gorm.Model
+	Name     string `json:"name"`
+	Email    string `json:"email" gorm:"uniqueIndex"`
+	Password string `json:"password"`
 }
 
-type Measurements struct {
-	Id         int       `json:"id"`
-	UserId     int       `json:"user_id"`
-	Weight     float64   `json:"weight"`
-	Height     float64   `json:"height"`
-	BodyFat    float64   `json:"body_fat"`
-	Created_at time.Time `json:"created_at"`
+func (u *User) HashPassword(rawPassword string) (string, error) {
+	if len(rawPassword) == 0 {
+		return "", errors.New("password is required")
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(rawPassword), bcrypt.DefaultCost)
+	return string(hashedPassword), err
+}
+
+func (u *User) CheckPassword(rawPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(rawPassword))
+	return err == nil
 }

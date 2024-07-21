@@ -7,9 +7,8 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"gorm.io/gorm"
 	"gorm.io/driver/postgres"
-	
+	"gorm.io/gorm"
 )
 
 var db *gorm.DB
@@ -35,6 +34,8 @@ func InitDB() {
 	}
 
 	fmt.Println("Successfully connected to database")
+
+	// db.AutoMigrate(&models.User{})
 }
 
 func GetDB() *gorm.DB {
