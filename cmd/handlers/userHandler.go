@@ -1,23 +1,15 @@
 package handlers
 
 import (
+	"errors"
 	"fitness-api/cmd/dto/request"
 	"fitness-api/cmd/dto/response"
 	"fitness-api/cmd/models"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
-
-// func CreateUser(c echo.Context) error {
-// 	user := models.User{}
-// 	c.Bind(&user)
-// 	newUser, err := repositories.CreateUser(user)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, err.Error())
-// 	}
-// 	return c.JSON(http.StatusCreated, newUser)
-// }
 
 func (h *Handler) SignUp(ctx echo.Context) error {
 	var u models.User
@@ -38,6 +30,9 @@ func (h *Handler) Login(ctx echo.Context) error {
 	}
 	u, err := h.userRepositoryImpl.GetByEmail(req.Email)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ctx.JSON(http.StatusForbidden, "Invalid email or password")
+		}
 		return ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 	if u == nil {
@@ -50,16 +45,19 @@ func (h *Handler) Login(ctx echo.Context) error {
 
 }
 
-func (h *Handler) CurrentUser(cxt echo.Context) error {
-	id := userIdFromToken(cxt)
+func (h *Handler) CurrentUser(ctx echo.Context) error {
+	id := userIdFromToken(ctx)
 	u, err := h.userRepositoryImpl.GetByID(id)
 	if err != nil {
-		return cxt.JSON(http.StatusInternalServerError, err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ctx.JSON(http.StatusNotFound, "User not found")
+		}
+		return ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 	if u == nil {
-		return cxt.JSON(http.StatusNotFound, "User not found")
+		return ctx.JSON(http.StatusNotFound, "User not found")
 	}
-	return cxt.JSON(http.StatusOK, u)
+	return ctx.JSON(http.StatusOK, u)
 }
 
 func userIdFromToken(ctx echo.Context) uint {
