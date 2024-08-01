@@ -2,7 +2,7 @@ package main
 
 import (
 	"fitness-api/cmd/handlers"
-	repositoryimpl "fitness-api/cmd/repositories/repositoryImpl"
+	repositoryImpl "fitness-api/cmd/repositories/repositoryImpl"
 	"fitness-api/cmd/storage"
 	"net/http"
 
@@ -19,8 +19,9 @@ func main() {
 	// connect to database
 	storage.InitDB()
 	db := storage.GetDB()
-	us := repositoryimpl.NewUserRepositoryImpl(db)
-	h := handlers.NewHandler(us)
+	us := repositoryImpl.NewUserRepositoryImpl(db)
+	cakeS := repositoryImpl.NewCakeRepositoryImpl(db)
+	h := handlers.NewHandler(us, cakeS)
 	h.Register(e)
 
 	// middleware
@@ -38,7 +39,7 @@ func main() {
 	// }))
 
 	// Init routes
-	handlers.InitRoutes(e)
+	// handlers.InitRoutes(e)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

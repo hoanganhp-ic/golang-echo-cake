@@ -4,24 +4,25 @@ import (
 	"fitness-api/cmd/dto"
 	"fitness-api/cmd/models"
 	"fitness-api/cmd/repositories"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
-func Create(c echo.Context) error {
+func (h *Handler) Create(c echo.Context) error {
+	id := userIdFromToken(c)
 	cake := models.Cake{}
 	c.Bind(&cake)
-	cake, err := repositories.Create(cake)
+	cake.UserID = int(id)
+	err := h.cakeRepositoryImpl.Create(cake)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, cake)
 }
 
-func Get(c echo.Context) error {
+func (h *Handler) Get(c echo.Context) error {
 	cake, err := repositories.GetAll()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
@@ -29,10 +30,11 @@ func Get(c echo.Context) error {
 	return c.JSON(http.StatusOK, cake)
 }
 
-func Search(c echo.Context) error {
+func (h *Handler) Search(c echo.Context) error {
 	name := c.QueryParam("name")
 	pageStr := c.QueryParam("page")
 	pageSizeStr := c.QueryParam("page_size")
+	id := userIdFromToken(c)
 
 	var page, pageSize int
 	var err error
@@ -59,11 +61,11 @@ func Search(c echo.Context) error {
 	} else {
 		pageSize = 3
 	}
-	fmt.Println(page, pageSize)
-	cakes, err := repositories.Search(dto.SearchCake{
+	cakes, err := h.cakeRepositoryImpl.Search(dto.SearchCake{
 		Name:     name,
 		Page:     page,
 		PageSize: pageSize,
+		UserID:   int(id),
 	})
 
 	if err != nil {
@@ -73,20 +75,20 @@ func Search(c echo.Context) error {
 	return c.JSON(http.StatusOK, cakes)
 }
 
-func GetByID(c echo.Context) error {
+func (h *Handler) GetByID(c echo.Context) error {
 	id := c.Param("id")
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	cake, err := repositories.GetByID(idInt)
+	cake, err := h.cakeRepositoryImpl.GetByID(idInt)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, cake)
 }
 
-func DeleteByID(c echo.Context) error {
+func (h *Handler) DeleteByID(c echo.Context) error {
 	id := c.Param("id")
 	idInt, err := strconv.Atoi(id)
 	if err != nil {

@@ -1,14 +1,14 @@
 package models
 
 import (
-	"time"
+	"gorm.io/gorm"
 )
 
 type Cake struct {
-	ID          int       `json:"id" gorm:"index;not null"`
-	Name        string    `json:"name" gorm:"not null"`
-	Description string    `json:"description"`
-	Price       float64   `json:"price"`
-	CreatedAt   time.Time // Automatically managed by GORM for creation time
-	UpdatedAt   time.Time // Automatically managed by GORM for update time
+	gorm.Model
+	Name        string  `json:"name" gorm:"not null"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	UserID      int     `json:"user_id"`
+	User        User    `json:"user"`
 }

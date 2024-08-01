@@ -1,13 +1,14 @@
 package handlers
 
 import (
-	repositoryimpl "fitness-api/cmd/repositories/repositoryImpl"
+	repositoryImpl "fitness-api/cmd/repositories/repositoryImpl"
 )
 
 type Handler struct {
-	userRepositoryImpl *repositoryimpl.UserRepositoryImpl
+	userRepositoryImpl *repositoryImpl.UserRepositoryImpl
+	cakeRepositoryImpl *repositoryImpl.CakeRepositoryImpl
 }
 
-func NewHandler(ur *repositoryimpl.UserRepositoryImpl) *Handler {
-	return &Handler{userRepositoryImpl: ur}
+func NewHandler(ur *repositoryImpl.UserRepositoryImpl, cr * repositoryImpl.CakeRepositoryImpl) *Handler {
+	return &Handler{userRepositoryImpl: ur, cakeRepositoryImpl: cr}
 }

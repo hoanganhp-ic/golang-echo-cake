@@ -14,17 +14,17 @@ func InitTest(e *echo.Echo) {
 func InitRoutes(e *echo.Echo) {
 
 	// create api group
-	apiGroup := e.Group("/api")
+	// apiGroup := e.Group("/api")
 
 	// create cake group
-	cake := apiGroup.Group("/cakes")
+	// cake := apiGroup.Group("/cakes")
 
 	// cake routes
-	cake.POST("", Create)
-	cake.GET("", Get)
-	cake.GET("/search", Search)
-	cake.GET("/:id", GetByID)
-	cake.DELETE("/:id", DeleteByID)
+	// cake.POST("", Create)
+	// cake.GET("", Get)
+	// cake.GET("/search", Search)
+	// cake.GET("/:id", GetByID)
+	// cake.DELETE("/:id", DeleteByID)
 }
 
 func (h *Handler) Register(e *echo.Echo) {
@@ -38,4 +38,13 @@ func (h *Handler) Register(e *echo.Echo) {
 	// create user group
 	user := apiGroup.Group("/users", jwtMiddleware)
 	user.GET("/current", h.CurrentUser)
+
+	// create cake group
+	cake := apiGroup.Group("/cakes", jwtMiddleware)
+	// cake routes
+	cake.POST("", h.Create)
+	cake.GET("", h.Get)
+	cake.GET("/search", h.Search)
+	cake.GET("/:id", h.GetByID)
+	cake.DELETE("/:id", h.DeleteByID)
 }

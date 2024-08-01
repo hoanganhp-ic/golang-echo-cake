@@ -10,6 +10,13 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+type CakeRepositories interface {
+	Create(cake models.Cake) error
+	Search(searchCake dto.SearchCake) ([]models.Cake, error)
+	GetByID(id int) (models.Cake, error)
+	DeleteByID(id int) error
+}
+
 func Create(cake models.Cake) (models.Cake, error) {
 	db := storage.GetDB()
 	err := db.Create(&cake).Error

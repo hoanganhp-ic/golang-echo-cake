@@ -66,10 +66,8 @@ func JWTWithConfig(config JWTConfig) echo.MiddlewareFunc {
 func jwtHeader(header string, authScheme string) jwtExtractor {
 	return func(ctx echo.Context) (string, error) {
 		auth := ctx.Request().Header.Get(header)
-		fmt.Println("123: ", auth)
 		l := len(authScheme)
 		if len(auth) > l+1 && auth[:l] == authScheme {
-			fmt.Println("123: ", auth[l+1:])
 			return auth[l+1:], nil
 		}
 		return "", ErrJWTMissing
