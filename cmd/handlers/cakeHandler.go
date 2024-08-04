@@ -19,6 +19,9 @@ func (h *Handler) Create(c echo.Context) error {
 	cake := models.Cake{}
 	c.Bind(&cake)
 	cake.UserID = int(id)
+	cake.Name = c.FormValue("name")
+	cake.Description = c.FormValue("description")
+	cake.Price, _ = strconv.ParseFloat(c.FormValue("price"), 64)
 
 	file, err := c.FormFile("image")
 	if err != nil {
