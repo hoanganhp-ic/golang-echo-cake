@@ -47,4 +47,7 @@ func (h *Handler) Register(e *echo.Echo) {
 	cake.GET("/search", h.Search)
 	cake.GET("/:id", h.GetByID)
 	cake.DELETE("/:id", h.DeleteByID)
+
+	// Serve static files (profile pictures) from the 'picture' directory.
+	e.Static("/picture", "/Users/hoanganh.pham/Documents/learn/webapp/backend/files")
 }

@@ -4,10 +4,14 @@ import (
 	"fitness-api/cmd/dto"
 	"fitness-api/cmd/models"
 	"fitness-api/cmd/repositories"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 func (h *Handler) Create(c echo.Context) error {
@@ -15,7 +19,17 @@ func (h *Handler) Create(c echo.Context) error {
 	cake := models.Cake{}
 	c.Bind(&cake)
 	cake.UserID = int(id)
-	err := h.cakeRepositoryImpl.Create(cake)
+
+	file, err := c.FormFile("image")
+	if err != nil {
+		log.Errorf("Invalid data!")
+	}
+	if err := saveFile(file); err != nil {
+		log.Errorf("An internal server error occurred when saving the image!")
+	}
+	cake.ImageUrl = file.Filename
+
+	err = h.cakeRepositoryImpl.Create(cake)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
@@ -99,4 +113,27 @@ func (h *Handler) DeleteByID(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, "Deleted")
+}
+
+func saveFile(file *multipart.FileHeader) error {
+
+	// Open the uploaded file
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Destination
+	dst, err := os.Create("files/" + file.Filename)
+	if err != nil {
+		return err
+	}
+
+	// Copy the uploaded content to the destination file.
+	if _, err = io.Copy(dst, src); err != nil {
+		return err
+	}
+
+	return nil
 }
