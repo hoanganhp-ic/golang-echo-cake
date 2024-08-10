@@ -43,7 +43,7 @@ func (h *Handler) Register(e *echo.Echo) {
 	cake := apiGroup.Group("/cakes", jwtMiddleware)
 	// cake routes
 	cake.POST("", h.Create)
-	cake.GET("", h.Get)
+	// cake.GET("", h.Get)
 	cake.GET("/search", h.Search)
 	cake.GET("/:id", h.GetByID)
 	cake.DELETE("/:id", h.DeleteByID)

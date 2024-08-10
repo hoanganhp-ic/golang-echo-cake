@@ -3,7 +3,6 @@ package handlers
 import (
 	"fitness-api/cmd/dto"
 	"fitness-api/cmd/models"
-	"fitness-api/cmd/repositories"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -32,20 +31,21 @@ func (h *Handler) Create(c echo.Context) error {
 	}
 	cake.ImageUrl = file.Filename
 
-	err = h.cakeRepositoryImpl.Create(cake)
+	// err = h.cakeRepositoryImpl.Create(cake)
+	err = h.cakeRepository.Create(cake)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, cake)
 }
 
-func (h *Handler) Get(c echo.Context) error {
-	cake, err := repositories.GetAll()
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
-	}
-	return c.JSON(http.StatusOK, cake)
-}
+// func (h *Handler) Get(c echo.Context) error {
+// 	cake, err := h.cakeRepository.GetAll()
+// 	if err != nil {
+// 		return c.JSON(http.StatusInternalServerError, err)
+// 	}
+// 	return c.JSON(http.StatusOK, cake)
+// }
 
 func (h *Handler) Search(c echo.Context) error {
 	name := c.QueryParam("name")
@@ -78,7 +78,7 @@ func (h *Handler) Search(c echo.Context) error {
 	} else {
 		pageSize = 3
 	}
-	cakes, err := h.cakeRepositoryImpl.Search(dto.SearchCake{
+	cakes, err := h.cakeRepository.Search(dto.SearchCake{
 		Name:     name,
 		Page:     page,
 		PageSize: pageSize,
@@ -98,7 +98,7 @@ func (h *Handler) GetByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	cake, err := h.cakeRepositoryImpl.GetByID(idInt)
+	cake, err := h.cakeRepository.GetByID(idInt)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -111,7 +111,7 @@ func (h *Handler) DeleteByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	err = repositories.DeleteByID(idInt)
+	err = h.cakeRepository.DeleteByID(idInt)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}

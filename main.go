@@ -19,9 +19,10 @@ func main() {
 	// connect to database
 	storage.InitDB()
 	db := storage.GetDB()
-	us := repositoryImpl.NewUserRepositoryImpl(db)
-	cakeS := repositoryImpl.NewCakeRepositoryImpl(db)
-	h := handlers.NewHandler(us, cakeS)
+	// Initialize repositories
+	userRepo := repositoryImpl.NewUserRepositoryImpl(db)
+	cakeRepo := repositoryImpl.NewCakeRepositoryImpl(db)
+	h := handlers.NewHandler(userRepo, cakeRepo)
 	h.Register(e)
 
 	// middleware

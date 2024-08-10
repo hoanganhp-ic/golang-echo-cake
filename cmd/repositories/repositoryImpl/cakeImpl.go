@@ -17,7 +17,7 @@ type CakeRepositoryImpl struct {
 
 var _ repositories.CakeRepositories = (*CakeRepositoryImpl)(nil)
 
-func NewCakeRepositoryImpl(db *gorm.DB) *CakeRepositoryImpl {
+func NewCakeRepositoryImpl(db *gorm.DB) repositories.CakeRepositories {
 	return &CakeRepositoryImpl{db: db}
 }
 

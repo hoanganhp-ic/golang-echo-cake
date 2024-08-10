@@ -17,7 +17,7 @@ func (h *Handler) SignUp(ctx echo.Context) error {
 	if err := req.Bind(ctx, &u); err != nil {
 		return ctx.JSON(http.StatusBadRequest, err.Error())
 	}
-	if err := h.userRepositoryImpl.Create(&u); err != nil {
+	if err := h.userRepository.Create(&u); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.JSON(http.StatusCreated, response.NewUserResponse(&u))
@@ -28,7 +28,7 @@ func (h *Handler) Login(ctx echo.Context) error {
 	if err := req.Bind(ctx); err != nil {
 		return ctx.JSON(http.StatusBadRequest, err.Error())
 	}
-	u, err := h.userRepositoryImpl.GetByEmail(req.Email)
+	u, err := h.userRepository.GetByEmail(req.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ctx.JSON(http.StatusForbidden, "Invalid email or password")
@@ -47,7 +47,7 @@ func (h *Handler) Login(ctx echo.Context) error {
 
 func (h *Handler) CurrentUser(ctx echo.Context) error {
 	id := userIdFromToken(ctx)
-	u, err := h.userRepositoryImpl.GetByID(id)
+	u, err := h.userRepository.GetByID(id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ctx.JSON(http.StatusNotFound, "User not found")
