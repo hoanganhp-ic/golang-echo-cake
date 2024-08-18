@@ -10,6 +10,7 @@ type CakeRepositories interface {
 	Search(searchCake dto.SearchCake) ([]models.Cake, error)
 	GetByID(id int) (models.Cake, error)
 	DeleteByID(id int) error
+	UpdateByID(id int, cake models.Cake) error
 }
 
 // func Create(cake models.Cake) (models.Cake, error) {

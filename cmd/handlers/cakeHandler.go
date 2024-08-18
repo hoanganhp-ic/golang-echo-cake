@@ -118,6 +118,48 @@ func (h *Handler) DeleteByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, "Deleted")
 }
 
+func (h *Handler) UpdateByID(c echo.Context) error {
+
+	idUser := userIdFromToken(c)
+	id := c.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	cake, _ := h.cakeRepository.GetByID(idInt)
+	nameC := c.FormValue("name")
+	descriptionC := c.FormValue("description")
+	cake.Price, _ = strconv.ParseFloat(c.FormValue("price"), 64)
+	cake.UserID = int(idUser)
+	if nameC != "" {
+		cake.Name = nameC
+	}
+
+	if descriptionC != "" {
+		cake.Description = descriptionC
+	}
+
+	file, err := c.FormFile("image")
+	if file != nil {
+		if err != nil {
+			log.Errorf("Invalid data!")
+		} else if err := saveFile(file); err != nil {
+			log.Errorf("An internal server error occurred when saving the image!")
+		}
+
+		if err == nil {
+			cake.ImageUrl = file.Filename
+		}
+	}
+
+	err = h.cakeRepository.UpdateByID(idInt, cake)
+	if err != nil {
+		log.Errorf("An internal server error occurred when updating the cake!")
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, cake)
+}
+
 func saveFile(file *multipart.FileHeader) error {
 
 	// Open the uploaded file

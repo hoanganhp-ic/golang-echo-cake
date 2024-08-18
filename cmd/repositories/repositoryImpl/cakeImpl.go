@@ -60,4 +60,11 @@ func (cr *CakeRepositoryImpl) DeleteByID(id int) error {
 	return nil
 }
 
-
+func (cr *CakeRepositoryImpl) UpdateByID(id int, cake models.Cake) error {
+	err := cr.db.Model(&models.Cake{}).Where("id = ?", id).Where("user_id = ?", cake.UserID).Updates(cake).Error
+	if err != nil {
+		log.Errorf("cannot update cakeId: %d", id)
+		return err
+	}
+	return nil
+}
