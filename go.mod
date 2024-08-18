@@ -9,6 +9,7 @@ require (
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/labstack/gommon v0.4.2
 	github.com/lib/pq v1.10.9
+	github.com/rs/xid v1.5.0
 	golang.org/x/crypto v0.25.0
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gorm.io/driver/postgres v1.5.9

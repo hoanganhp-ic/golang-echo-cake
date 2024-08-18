@@ -3,6 +3,7 @@ package handlers
 import (
 	"fitness-api/cmd/jwt"
 	"fitness-api/cmd/utils"
+	"os"
 
 	"github.com/labstack/echo/v4"
 )
@@ -50,5 +51,5 @@ func (h *Handler) Register(e *echo.Echo) {
 	cake.PUT("/:id", h.UpdateByID)
 
 	// Serve static files (profile pictures) from the 'picture' directory.
-	e.Static("/picture", "/Users/hoanganh.pham/Documents/learn/webapp/backend/files")
+	e.Static("/picture", os.Getenv("PATH_TO_UPLOAD"))
 }

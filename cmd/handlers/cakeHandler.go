@@ -7,10 +7,12 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"github.com/rs/xid"
 )
 
 func (h *Handler) Create(c echo.Context) error {
@@ -26,10 +28,12 @@ func (h *Handler) Create(c echo.Context) error {
 	if err != nil {
 		log.Errorf("Invalid data!")
 	}
-	if err := saveFile(file); err != nil {
+	fileName, err := saveFile(file)
+	if err != nil {
 		log.Errorf("An internal server error occurred when saving the image!")
+	} else {
+		cake.ImageUrl = fileName
 	}
-	cake.ImageUrl = file.Filename
 
 	// err = h.cakeRepositoryImpl.Create(cake)
 	err = h.cakeRepository.Create(cake)
@@ -143,12 +147,13 @@ func (h *Handler) UpdateByID(c echo.Context) error {
 	if file != nil {
 		if err != nil {
 			log.Errorf("Invalid data!")
-		} else if err := saveFile(file); err != nil {
-			log.Errorf("An internal server error occurred when saving the image!")
-		}
-
-		if err == nil {
-			cake.ImageUrl = file.Filename
+		} else {
+			fileName, err := saveFile(file)
+			if err != nil {
+				log.Errorf("An internal server error occurred when saving the image!")
+			} else {
+				cake.ImageUrl = fileName
+			}
 		}
 	}
 
@@ -160,25 +165,26 @@ func (h *Handler) UpdateByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, cake)
 }
 
-func saveFile(file *multipart.FileHeader) error {
+func saveFile(file *multipart.FileHeader) (string, error) {
 
 	// Open the uploaded file
 	src, err := file.Open()
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer src.Close()
 
 	// Destination
-	dst, err := os.Create("files/" + file.Filename)
+	var fileName string = xid.New().String() + filepath.Ext(file.Filename)
+	dst, err := os.Create(os.Getenv("PATH_TO_UPLOAD") + fileName)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Copy the uploaded content to the destination file.
 	if _, err = io.Copy(dst, src); err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return fileName, nil
 }
