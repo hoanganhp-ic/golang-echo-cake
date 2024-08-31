@@ -16,4 +16,4 @@ func (p *Paginate) PaginatedResult(db *gorm.DB) *gorm.DB {
 
 func NewPaginate(limit int, page int) *Paginate {
 	return &Paginate{limit: limit, page: page}
- }
+}
