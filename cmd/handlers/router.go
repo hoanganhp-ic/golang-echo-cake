@@ -12,22 +12,6 @@ func InitTest(e *echo.Echo) {
 	e.GET("/", Home)
 }
 
-func InitRoutes(e *echo.Echo) {
-
-	// create api group
-	// apiGroup := e.Group("/api")
-
-	// create cake group
-	// cake := apiGroup.Group("/cakes")
-
-	// cake routes
-	// cake.POST("", Create)
-	// cake.GET("", Get)
-	// cake.GET("/search", Search)
-	// cake.GET("/:id", GetByID)
-	// cake.DELETE("/:id", DeleteByID)
-}
-
 func (h *Handler) Register(e *echo.Echo) {
 	jwtMiddleware := jwt.JWT(utils.JWTSecret)
 	// create api group
@@ -49,6 +33,13 @@ func (h *Handler) Register(e *echo.Echo) {
 	cake.GET("/:id", h.GetByID)
 	cake.DELETE("/:id", h.DeleteByID)
 	cake.PUT("/:id", h.UpdateByID)
+
+	// create category group
+	apiCate := apiGroup.Group("/categories")
+	apiCate.GET("", h.GetAllCategories)
+	apiCate.GET("/:id", h.GeCateByID)
+	apiCate.POST("", h.CreateCategory)
+	apiCate.PUT("/:id", h.UpdateCategory)
 
 	// Serve static files (profile pictures) from the 'picture' directory.
 	e.Static("/picture", os.Getenv("PATH_TO_UPLOAD"))

@@ -22,7 +22,8 @@ func main() {
 	// Initialize repositories
 	userRepo := repositoryImpl.NewUserRepositoryImpl(db)
 	cakeRepo := repositoryImpl.NewCakeRepositoryImpl(db)
-	h := handlers.NewHandler(userRepo, cakeRepo)
+	categoryRepo := repositoryImpl.NewCategoryRepositoryImpl(db)
+	h := handlers.NewHandler(userRepo, cakeRepo, categoryRepo)
 	h.Register(e)
 
 	// middleware
@@ -33,14 +34,6 @@ func main() {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
-
-	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-	// 	AllowOrigins: []string{"*"},
-	// 	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	// }))
-
-	// Init routes
-	// handlers.InitRoutes(e)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
