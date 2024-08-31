@@ -10,6 +10,7 @@ type Cake struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	ImageUrl	   string  `json:"image_url"`
-	UserID      int     `json:"user_id"`
+	UserID      uint     `json:"user_id"`
 	User        User    `json:"user"`
+	CategoryID  uint     `json:"category_id"`
 }

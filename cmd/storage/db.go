@@ -39,7 +39,7 @@ func InitDB() {
 
 	fmt.Println("Successfully connected to database")
 
-	db.AutoMigrate(&models.Cake{})
+	db.AutoMigrate(&models.Cake{}, &models.Category{}, &models.User{})
 }
 
 func GetDB() *gorm.DB {

@@ -19,7 +19,7 @@ func (h *Handler) Create(c echo.Context) error {
 	id := userIdFromToken(c)
 	cake := models.Cake{}
 	c.Bind(&cake)
-	cake.UserID = int(id)
+	cake.UserID = id
 	cake.Name = c.FormValue("name")
 	cake.Description = c.FormValue("description")
 	cake.Price, _ = strconv.ParseFloat(c.FormValue("price"), 64)
@@ -134,7 +134,7 @@ func (h *Handler) UpdateByID(c echo.Context) error {
 	nameC := c.FormValue("name")
 	descriptionC := c.FormValue("description")
 	cake.Price, _ = strconv.ParseFloat(c.FormValue("price"), 64)
-	cake.UserID = int(idUser)
+	cake.UserID = idUser
 	if nameC != "" {
 		cake.Name = nameC
 	}
