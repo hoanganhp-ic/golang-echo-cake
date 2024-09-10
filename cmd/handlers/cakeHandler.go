@@ -35,22 +35,12 @@ func (h *Handler) Create(c echo.Context) error {
 		cake.ImageUrl = fileName
 	}
 
-	// err = h.cakeRepositoryImpl.Create(cake)
 	err = h.cakeRepository.Create(cake)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, cake)
 }
-
-// func (h *Handler) Get(c echo.Context) error {
-// 	cake, err := h.cakeRepository.GetAll()
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, err)
-// 	}
-// 	return c.JSON(http.StatusOK, cake)
-// }
-
 func (h *Handler) Search(c echo.Context) error {
 	name := c.QueryParam("name")
 	pageStr := c.QueryParam("page")
